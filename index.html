@@ -85,6 +85,36 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     
     <script>
+
+        /////// Get marker icons ////////
+        var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        
+        var yellowIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var greenIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+
         /////////////Ajax Requests////////////
         $(document).ready(function() {
             // Fetch the initial Map
@@ -210,15 +240,24 @@
     
                 var json_data = {
                     "City": data.feed.entry[i].gsx$city.$t,
-                    "OderID" : data.feed.entry[i].gsx$orderid.$t,
+                    "OrderID" : data.feed.entry[i].gsx$orderid.$t,
                     "Item" : data.feed.entry[i].gsx$item.$t,
+                    "Dispatched": data.feed.entry[i].gsx$orderdispatched.$t,
+                    "Shipped": data.feed.entry[i].gsx$ordershipped.$t,
                     "Latitude": parseFloat(data.feed.entry[i].gsx$latitude.$t),
                     "Longitude": parseFloat(data.feed.entry[i].gsx$longitude.$t)
                 };
                 jsonDataObject.push(json_data);
                     
                 for (var j = 0; j < jsonDataObject.length; j++) {
-                    var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)));
+                    
+                    if(jsonDataObject[j].Dispatched == "No")
+                        var icon = redIcon;
+                    else if(jsonDataObject[j].Shipped == "No")
+                        var icon = yellowIcon;
+                    else
+                        var icon = greenIcon;
+                    var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude) ), {icon: icon} );
                     marker.bindPopup(jsonDataObject[j].City, {
                             autoClose: false
                     });
@@ -231,7 +270,7 @@
                             var marker = e.target;
                             popup = L.popup()
                             .setLatLng(marker.getLatLng())
-                            .setContent("Order ID: " + marker.myJsonData.OderID + " || Item: " +   marker.myJsonData.Item)
+                            .setContent("Order ID: " + marker.myJsonData.OrderID + " || Item: " +   marker.myJsonData.Item)
                             .openOn(map);
                         }
     
