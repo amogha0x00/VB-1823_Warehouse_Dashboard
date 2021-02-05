@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Vargi-Bots</title>
-    
+        <meta charset="UTF-8">
         <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
@@ -32,7 +32,7 @@
                 text-align: center;
             }
             tr:nth-child(even) {
-                background-color: #111;
+                background-color: #171717;
             }
             th {
                 border: 1px solid black;
@@ -161,7 +161,7 @@
 
         function refreshChart(){
             var jsonDataObject =[];
-            var graph_arr = [['Order ID', 'Time Taken', { role: 'style' }]];
+            var graph_arr = [['Order ID', 'Time Taken', { role: 'style' }, {role: 'annotation'}]];
             var bar_color = [];
             $.getJSON('https://spreadsheets.google.com/feeds/list/1vbVqAfMvyjAR_u5jv6WgkoQyEs9bgOwIZe8p43G6HHo/5/public/full?alt=json', function(data) {
                 for (var i = 0; i < data.feed.entry.length; ++i) {
@@ -189,7 +189,7 @@
             
                     // Converting Json Object to JavaScript Array
                 for(var j in jsonDataObject){
-                   graph_arr.push([jsonDataObject[j].OrderID,jsonDataObject[j].TimeTaken, bar_color[j]]);
+                   graph_arr.push([jsonDataObject[j].OrderID,jsonDataObject[j].TimeTaken, bar_color[j], jsonDataObject[j].TimeTaken.toFixed(0)+ "s" ]);
                 }
                 var graphArray_Final = google.visualization.arrayToDataTable(graph_arr);
                 
@@ -238,7 +238,6 @@
                                   '</td></tr>';
                     }
     
-                    console.log(trHTML);
                     $('#tableContent').html(trHTML);
                     var trHTML = '';
     
@@ -271,11 +270,11 @@
             }
             for (var j = 0; j < jsonDataObject.length; j++) {
                     
-                if(jsonDataObject[j].Dispatched == "No")
+                if(jsonDataObject[j].Dispatched == "NO")
                     var icon = redIcon;
-                else if(jsonDataObject[j].Shipped == "No")
+                else if(jsonDataObject[j].Shipped == "NO")
                     var icon = yellowIcon;
-                else if(jsonDataObject[j].Shipped == "Yes")
+                else if(jsonDataObject[j].Shipped == "YES")
                     var icon = greenIcon;
                 else 
                     var icon = redIcon;
