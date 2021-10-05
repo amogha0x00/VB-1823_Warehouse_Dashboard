@@ -144,17 +144,17 @@
         });
 
         function sanitize(string) {
-          const map = {
-              '&': '&amp;',
-              '<': '&lt;',
-              '>': '&gt;',
-              '"': '&quot;',
-              "'": '&#x27;',
-              "/": '&#x2F;',
-              "`": '&grave;'
-          };
-          const reg = /[&<>"'/]/ig;
-          return string.replace(reg, (match)=>(map[match]));
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#x27;',
+                "/": '&#x2F;',
+                "`": '&grave;'
+            };
+            const reg = /[&<>"'/]/ig;
+            return string.replace(reg, (match)=>(map[match]));
         }
     
         google.charts.load("current", {packages:['corechart']});
@@ -164,12 +164,13 @@
             var jsonDataObject =[];
             var graph_arr = [['Order ID', 'Time Taken', { role: 'style' }, {role: 'annotation'}]];
             var bar_color = [];
-            $.getJSON('https://spreadsheets.google.com/feeds/list/1vbVqAfMvyjAR_u5jv6WgkoQyEs9bgOwIZe8p43G6HHo/5/public/full?alt=json', function(data) {
-                for (var i = 0; i < data.feed.entry.length; ++i) {
+            fetch('https://script.google.com/macros/s/AKfycbxzJNce_v4iRa5B5Z-CiB9qelZabCJA20y2kwRQkGoMJvbx0rnwp5WAHmYkbZONJCfYWQ/exec').then(res=>res.text()).then(text=> {
+                var data = JSON.parse(text);
+                for (var i = 0; i < data.length; ++i) {
                     var json_data = {
-                        "OrderID" : sanitize(data.feed.entry[i].gsx$orderid.$t),
-                        "TimeTaken": parseFloat(sanitize(data.feed.entry[i].gsx$timetaken.$t)),
-                        "Priority": sanitize(data.feed.entry[i].gsx$priority.$t)
+                        "OrderID" : sanitize(data[i].orderid),
+                        "TimeTaken": parseFloat(sanitize(data[i].timetaken)),
+                        "Priority": sanitize(data[i].priority)
                     };
                     jsonDataObject.push(json_data);
                 };
@@ -219,26 +220,26 @@
             
             // var trHTML = '';     
             
-            $.getJSON('https://spreadsheets.google.com/feeds/list/1vbVqAfMvyjAR_u5jv6WgkoQyEs9bgOwIZe8p43G6HHo/5/public/full?alt=json', function(data) {
-                
+            fetch('https://script.google.com/macros/s/AKfycbxzJNce_v4iRa5B5Z-CiB9qelZabCJA20y2kwRQkGoMJvbx0rnwp5WAHmYkbZONJCfYWQ/exec').then(res=>res.text()).then(text=> {
+                    var data = JSON.parse(text);
+                    console.log(data);
                     var trHTML = '';
     
-                    for (var i = 0; i < data.feed.entry.length; ++i) {
+                    for (var i = 0; i < data.length; ++i) {
     
-                        trHTML += '<tr><td>'  + sanitize(data.feed.entry[i].gsx$orderid.$t)         + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$item.$t)            + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$priority.$t)        + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$quantity.$t)        + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$city.$t)            + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$orderdispatched.$t) + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$ordershipped.$t)    + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$ordertime.$t)       + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$dispatchtime.$t)    +
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$shippingtime.$t)    + 
-                                  '</td><td>' + sanitize(data.feed.entry[i].gsx$timetaken.$t)       + 
+                        trHTML += '<tr><td>'  + sanitize(data[i].orderid)         + 
+                                  '</td><td>' + sanitize(data[i].item)            + 
+                                  '</td><td>' + sanitize(data[i].priority)        + 
+                                  '</td><td>' + sanitize(data[i].quantity)        + 
+                                  '</td><td>' + sanitize(data[i].city)            + 
+                                  '</td><td>' + sanitize(data[i].orderdispatched) + 
+                                  '</td><td>' + sanitize(data[i].ordershipped)    + 
+                                  '</td><td>' + sanitize(data[i].ordertime)       + 
+                                  '</td><td>' + sanitize(data[i].dispatchtime)    +
+                                  '</td><td>' + sanitize(data[i].shippingtime)    + 
+                                  '</td><td>' + sanitize(data[i].timetaken)       + 
                                   '</td></tr>';
                     }
-    
                     $('#tableContent').html(trHTML);
                     var trHTML = '';
     
@@ -255,17 +256,18 @@
             var map = L.map('map').setView([23.5937, 78.9629], 4);
             var jsonDataObject =[];
     
-            $.getJSON('https://spreadsheets.google.com/feeds/list/1vbVqAfMvyjAR_u5jv6WgkoQyEs9bgOwIZe8p43G6HHo/5/public/full?alt=json', function(data) {
-            for (var i = 0; i < data.feed.entry.length; ++i) {
+            fetch('https://script.google.com/macros/s/AKfycbxzJNce_v4iRa5B5Z-CiB9qelZabCJA20y2kwRQkGoMJvbx0rnwp5WAHmYkbZONJCfYWQ/exec').then(data=>data.text()).then(data=> {
+            data = JSON.parse(data);
+            for (var i = 0; i < data.length; ++i) {
     
                 var json_data = {
-                    "City": sanitize(data.feed.entry[i].gsx$city.$t),
-                    "OrderID" : sanitize(data.feed.entry[i].gsx$orderid.$t),
-                    "Item" : sanitize(data.feed.entry[i].gsx$item.$t),
-                    "Dispatched": sanitize(data.feed.entry[i].gsx$orderdispatched.$t),
-                    "Shipped": sanitize(data.feed.entry[i].gsx$ordershipped.$t),
-                    "Latitude": parseFloat(sanitize(data.feed.entry[i].gsx$latitude.$t)),
-                    "Longitude": parseFloat(sanitize(data.feed.entry[i].gsx$longitude.$t))
+                    "City": sanitize(data[i].city),
+                    "OrderID" : sanitize(data[i].orderid),
+                    "Item" : sanitize(data[i].item),
+                    "Dispatched": sanitize(data[i].orderdispatched),
+                    "Shipped": sanitize(data[i].ordershipped),
+                    "Latitude": parseFloat(sanitize(data[i].latitude)),
+                    "Longitude": parseFloat(sanitize(data[i].longitude))
                 };
                 jsonDataObject.push(json_data);
             }
