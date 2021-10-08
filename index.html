@@ -176,7 +176,7 @@
             }
             // Converting Json Object to JavaScript Array
             for(var j in jsonDataObject){
-                graph_arr.push([jsonDataObject[j].OrderID, parseFloat(jsonDataObject[j].timetaken), bar_color[j], parseFloat(jsonDataObject[j].timetaken).toFixed(0)+ "s" ]);
+                graph_arr.push([jsonDataObject[j].orderid, parseFloat(jsonDataObject[j].timetaken), bar_color[j], parseFloat(jsonDataObject[j].timetaken).toFixed(0)+ "s" ]);
             }
             var graphArray_Final = google.visualization.arrayToDataTable(graph_arr);
                 
